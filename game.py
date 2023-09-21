@@ -6,12 +6,13 @@ np.random.seed(2)
 
 
 N_STATES = 9
-ACTIONS = ['sol', 'sag','zıpla']
+ACTIONS = ['left', 'right','jump']
 
 EPSILON = 0.9
 ALPHA = 0.1 
 GAMMA = 0.9 
 
+env_list = ['_']*(3)+['-']+['_']*(3)+['T']
 MAX_EPISODES = 15
 FRESH_TIME = 0.3
 
@@ -34,20 +35,26 @@ def choose_action(state, q_table):
 
 
 def get_env_feedback(S, A):
-    if A=='sag':
+    if A=='right':
         if S == N_STATES-2:
             S_ = 'terminal'
             R = 1
         else:
+          if env_list[S+1] != "-":
             S_ = S + 1
             R = 0
-    elif A=='zıpla':
-        if S == "I":
-            S_ = S + 1
-            R = 0
-        else:
+          else:
             S_ = S
             R = 0
+    elif A=='jump':
+      R = 0
+      if S != N_STATES-2:
+        if env_list[S+1] == "-":
+            S_ = S + 1
+        else:
+            S_ = S
+      else:
+            S_ = S
     else:
         R = 0
         if S == 0:
@@ -58,7 +65,7 @@ def get_env_feedback(S, A):
 
 
 def update_env(S, episode, step_counter):
-    env_list = ['X']*(3)+['I']+['X']*(3)+['T']
+    env_list = ['_']*(3)+['-']+['_']*(3)+['T']
     if S == 'terminal':
         interaction = 'Episode is%s tatal_steps = %s' % (episode+1, step_counter)
         print('\r{}'.format(interaction), end='')
